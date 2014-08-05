@@ -2,8 +2,6 @@
 
 $Nwidth:480px;
 $Nheight:360px;
-$FSwidth:1024px;
-$FSheight:640px;
 $fontSize:18px;
 
 
@@ -20,15 +18,10 @@ header{
     top: 20px;
     left: $Nwidth+40px;
     padding: 20px;
-    margin: 20px;
 
     h1{
         color: #cccccc;
         font-size: $fontSize*2;
-    }
-    + .slide{
-        display: block;
-        float: left;
     }
 }
 
@@ -39,17 +32,20 @@ header{
     width: $Nwidth;
     height: $Nheight;
     padding: 20px;
-    margin: 20px;
 
     h2{
         font-size: $fontSize*1.5;
         color: #cccccc;
     }
-}
 
-.slide.full{
-    position: absolute;
-    margin: auto;
-    width: $FSwidth;
-    height: $FSheight;
+    &.full{
+        position: absolute;
+        left: 50%;
+        display: block;
+    }
+
+    &:nth-child(2){
+        display: block;
+        float: left;
+    }
 }

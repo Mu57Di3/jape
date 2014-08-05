@@ -48,14 +48,10 @@ header {
   position: absolute;
   top: 20px;
   left: 520px;
-  padding: 20px;
-  margin: 20px; }
+  padding: 20px; }
   header h1 {
     color: #cccccc;
     font-size: 36px; }
-  header + .slide {
-    display: block;
-    float: left; }
 
 .slide {
   display: none;
@@ -63,8 +59,14 @@ header {
   position: relative;
   width: 480px;
   height: 360px;
-  padding: 20px;
-  margin: 20px; }
+  padding: 20px; }
   .slide h2 {
     font-size: 27px;
     color: #cccccc; }
+  .slide.full {
+    position: absolute;
+    left: 50%;
+    display: block; }
+  .slide:nth-child(2) {
+    display: block;
+    float: left; }
