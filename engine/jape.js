@@ -147,6 +147,7 @@
             if (id != 0){
                 this.hideSlide(0);
             }
+            that.state = 'normal';
         }
     }
 
