@@ -9,40 +9,47 @@ $fontSize:18px;
 
 
 body{
-  background: url("tweed.png");
-  font-size: $fontSize;
+    background: url("tweed.png");
+    font-size: $fontSize;
 }
 
 
 
 header{
-  position: absolute;
-  top: 20px;
-  left: $Nwidth+40px;
-  padding: 20px;
-  margin: 20px;
+    position: absolute;
+    top: 20px;
+    left: $Nwidth+40px;
+    padding: 20px;
+    margin: 20px;
 
-  h1{
-    color: #cccccc;
-    font-size: $fontSize*2;
-  }
-  + .slide{
-    display: block;
-    float: left;
-  }
+    h1{
+        color: #cccccc;
+        font-size: $fontSize*2;
+    }
+    + .slide{
+        display: block;
+        float: left;
+    }
 }
 
 .slide{
-  display: none;
-  background: #ffffff;
-  position: relative;
-  width: $Nwidth;
-  height: $Nheight;
-  padding: 20px;
-  margin: 20px;
+    display: none;
+    background: #ffffff;
+    position: relative;
+    width: $Nwidth;
+    height: $Nheight;
+    padding: 20px;
+    margin: 20px;
 
-  h2{
-    font-size: $fontSize*1.5;
-    color: #cccccc;
-  }
+    h2{
+        font-size: $fontSize*1.5;
+        color: #cccccc;
+    }
+}
+
+.slide.full{
+    position: absolute;
+    margin: auto;
+    width: $FSwidth;
+    height: $FSheight;
 }
