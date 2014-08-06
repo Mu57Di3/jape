@@ -42,31 +42,63 @@ table {
 
 body {
   background: url("tweed.png");
-  font-size: 18px; }
+  font-size: 25px; }
 
 header {
   position: absolute;
   top: 20px;
-  left: 520px;
+  left: 552px;
   padding: 20px; }
   header h1 {
     color: #cccccc;
-    font-size: 36px; }
+    font-size: 50px; }
 
 .slide {
-  display: none;
-  background: #ffffff;
   position: relative;
-  width: 480px;
-  height: 360px;
-  padding: 20px; }
+  width: 1024px;
+  height: 640px;
+  background: #FFF;
+  color: #000;
+  -webkit-print-color-adjust: exact;
+  -webkit-text-size-adjust: none;
+  -moz-text-size-adjust: none;
+  -ms-text-size-adjust: none;
+  margin: 0 -412px -220px 0;
+  transform-origin: 0 0;
+  transform: scale(0.5);
+  visibility: hidden; }
+  @media (max-width: 1324px) {
+    .slide {
+      margin: 0 -688px -400px 0;
+      transform: scale(0.25); } }
   .slide h2 {
-    font-size: 27px;
+    font-size: 37.5px;
     color: #cccccc; }
-  .slide.full {
-    position: absolute;
-    left: 50%;
-    display: block; }
   .slide:nth-child(2) {
-    display: block;
+    visibility: visible;
     float: left; }
+
+.list {
+  overflow: hidden; }
+
+.full {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  overflow: hidden;
+  margin: -320px 0 0 -512px;
+  width: 1024px;
+  height: 640px;
+  background: #000; }
+  .full header {
+    visibility: hidden; }
+  .full .slide {
+    transform: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    visibility: hidden; }
+  .full .slide.active {
+    visibility: visible; }
+  .full .slide.visited {
+    visibility: hidden; }

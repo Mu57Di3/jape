@@ -26,6 +26,18 @@
     }
 
     /**
+     * Пребор элементов колекции или массива
+     * @param array
+     * @param callback
+     * @param scope
+     */
+    var forEach = function (array, callback, scope) {
+        for (var i = 0; i < array.length; i++) {
+            callback.call(scope, i, array[i]); // passes back stuff we need
+        }
+    };
+
+    /**
      * Класс для вывода логов
      * @type {{_getTimeStamp: _getTimeStamp, info: info, log: log}}
      */
@@ -118,54 +130,66 @@
             that = this;
             trace.info('Инициализация презентации');
             this.slides = $('section',this.elem);
+            forEach(this.slides,function(){
+
+            })
 
             // На первый слайд вешаем клик который развернет презентацию на полный экран
             this.slides[0].addEventListener('click',function (e){
-                var el = e.currentTarget || e.target;
-                curentPresentation = el.parentNode['data-id'];
-                that.showSlide(0);
-                that.state = 'full';
+                that.start.call(that);
+
             });
         },
 
         showSlide: function(id){
-            var slide = this.slides[id];
-
-            slide.style.width = this.fullscreenSize[0]+'px';
-            slide.style.height = this.fullscreenSize[1]+'px';
-            slide.style.marginLeft = '-'+Math.round(this.fullscreenSize[0]/2)+'px';
-            utils.addClass(slide,'full');
-            this.curentSlide = id;
+            if (id < this.slides.length){
+                var slide = this.slides[id];
+                slide.classList.add('active');
+                this.curentSlide = id;
+            }
         },
 
         hideSlide: function(id){
             var slide = this.slides[id];
-            utils.removeClass(slide,'full');
-            slide.style.width = '480px';
-            slide.style.height = '360px';
-            slide.style.marginLeft = '0';
-            if (id != 0){
-                this.hideSlide(0);
+            slide.classList.remove('active');
+        },
+
+        next:function (){
+            if (this.state == 'full') {
+                this.hideSlide(this.curentSlide);
+                this.showSlide(this.curentSlide + 1);
             }
-            that.state = 'normal';
+        },
+
+        start: function(){
+            curentPresentation = this.elem['data-id'];
+            var d = that.fullscreenSize[1]/640;
+            this.elem.style.transform = 'scale('+d+')';
+            this.elem.classList.add('full');
+            this.elem.classList.remove('list');
+            trace.info(this.state);
+            if (this.state == 'normal'){
+
+                this.showSlide(0);
+                this.state = 'full';
+            }
+        },
+
+        stop:function (){
+            this.elem.classList.remove('full');
+            this.elem.classList.add('list');
+            that.elem.style.transform = 'none';
+            this.state = 'normal';
         }
+
+
     }
 
     utils = {
-
-        addClass:function(el,cl){
-            el.className += ' '+cl;
-        },
-
-        removeClass:function(el,cl){
-            el.className = el.className.replace(cl,'');
-        },
-
         getSlideSize: function (){
             var out = [0,0];
             var size = this.getPageSize();
-            var d = 1.333333;
-            size[1]-=40;
+            var d = 16/10;
             var ds = size[0]/size[1];
             if (ds>1){
                 out[0] = Math.ceil(size[1]*d);
@@ -203,12 +227,6 @@
 
     }
 
-    function  getPageSize(){
-
-    }
-
-
-
 
     window.addEventListener('DOMContentLoaded', function (){
         trace.info(utils.getPageSize());
@@ -227,8 +245,12 @@
         switch (e.which) {
             case 27:
                 var pr = presentations[curentPresentation];
-                pr.hideSlide(pr.curentSlide);
+                pr.stop();
 
+            break;
+            case 32:
+                var pr = presentations[curentPresentation];
+                pr.next();
             break;
         }
     })
