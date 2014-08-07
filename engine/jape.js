@@ -118,7 +118,6 @@
         this.slides = {};
         this.state = 'normal';
         this.curentSlide = null;
-        this.fullscreenSize = utils.getSlideSize();
         trace.info(this.fullscreenSize);
     }
 
@@ -130,9 +129,7 @@
             that = this;
             trace.info('Инициализация презентации');
             this.slides = $('section',this.elem);
-            forEach(this.slides,function(){
 
-            })
 
             // На первый слайд вешаем клик который развернет презентацию на полный экран
             this.slides[0].addEventListener('click',function (e){
@@ -163,8 +160,7 @@
 
         start: function(){
             curentPresentation = this.elem['data-id'];
-            var d = that.fullscreenSize[1]/640;
-            this.elem.style.transform = 'scale('+d+')';
+            this.applyScale(utils.getScale());
             this.elem.classList.add('full');
             this.elem.classList.remove('list');
             trace.info(this.state);
@@ -173,32 +169,43 @@
                 this.showSlide(0);
                 this.state = 'full';
             }
+            document.body.classList.add('offScroll');
         },
 
         stop:function (){
             this.elem.classList.remove('full');
             this.elem.classList.add('list');
-            that.elem.style.transform = 'none';
+            this.applyScale('none');
             this.state = 'normal';
+            document.body.classList.remove('offScroll');
+        },
+
+        applyScale:function(val){
+            that = this;
+            forEach(
+                [
+                    'WebkitTransform',
+                    'MozTransform',
+                    'msTransform',
+                    'OTransform',
+                    'transform'
+                ],
+                function (id,item){
+                    that.elem.style[item] = val;
+                }
+            )
         }
+
 
 
     }
 
     utils = {
-        getSlideSize: function (){
-            var out = [0,0];
+        getScale:function (){
             var size = this.getPageSize();
-            var d = 16/10;
-            var ds = size[0]/size[1];
-            if (ds>1){
-                out[0] = Math.ceil(size[1]*d);
-                out[1] = size[1];
-            } else {
-                out[0] = size[0];
-                out[1] = Math.ceil(size[0]*d);
-            }
-            return out;
+            return 'scale('+Math.min(
+                size[0]/1024,size[1]/640
+            )+')';
         },
 
         getPageSize:function (){
@@ -252,6 +259,13 @@
                 var pr = presentations[curentPresentation];
                 pr.next();
             break;
+        }
+    })
+
+    window.addEventListener('resize',function(){
+        var pr = presentations[curentPresentation];
+        if (pr.state == 'full') {
+            pr.applyScale(utils.getScale());
         }
     })
 
