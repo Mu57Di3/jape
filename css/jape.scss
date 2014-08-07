@@ -12,7 +12,9 @@ body{
     font-size: $fontSize;
 }
 
-
+.offScroll{
+    overflow: hidden;
+}
 
 header{
     position: absolute;

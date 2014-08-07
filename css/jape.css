@@ -44,6 +44,9 @@ body {
   background: url("tweed.png");
   font-size: 25px; }
 
+.offScroll {
+  overflow: hidden; }
+
 header {
   position: absolute;
   top: 20px;
