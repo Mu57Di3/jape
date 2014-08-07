@@ -118,7 +118,6 @@
         this.slides = {};
         this.state = 'normal';
         this.curentSlide = null;
-        this.fullscreenSize = utils.getSlideSize();
         trace.info(this.fullscreenSize);
     }
 
@@ -130,9 +129,7 @@
             that = this;
             trace.info('Инициализация презентации');
             this.slides = $('section',this.elem);
-            forEach(this.slides,function(){
 
-            })
 
             // На первый слайд вешаем клик который развернет презентацию на полный экран
             this.slides[0].addEventListener('click',function (e){
@@ -142,7 +139,7 @@
         },
 
         showSlide: function(id){
-            if ( (id < this.slides.length) && (id>=0) ){
+            if (id < this.slides.length && id>=0){
                 var slide = this.slides[id];
                 slide.classList.add('active');
                 this.curentSlide = id;
@@ -161,7 +158,7 @@
             }
         },
 
-        previous:function (){
+        previous: function (){
             if (this.state == 'full') {
                 this.hideSlide(this.curentSlide);
                 this.showSlide(this.curentSlide - 1);
@@ -170,8 +167,7 @@
 
         start: function(){
             curentPresentation = this.elem['data-id'];
-            var d = that.fullscreenSize[1]/640;
-            this.elem.style.transform = 'scale('+d+')';
+            this.applyScale(utils.getScale());
             this.elem.classList.add('full');
             this.elem.classList.remove('list');
             trace.info(this.state);
@@ -180,32 +176,43 @@
                 this.showSlide(0);
                 this.state = 'full';
             }
+            document.body.classList.add('offScroll');
         },
 
         stop:function (){
             this.elem.classList.remove('full');
             this.elem.classList.add('list');
-            that.elem.style.transform = 'none';
+            this.applyScale('none');
             this.state = 'normal';
+            document.body.classList.remove('offScroll');
+        },
+
+        applyScale:function(val){
+            that = this;
+            forEach(
+                [
+                    'WebkitTransform',
+                    'MozTransform',
+                    'msTransform',
+                    'OTransform',
+                    'transform'
+                ],
+                function (id,item){
+                    that.elem.style[item] = val;
+                }
+            )
         }
+
 
 
     }
 
     utils = {
-        getSlideSize: function (){
-            var out = [0,0];
+        getScale:function (){
             var size = this.getPageSize();
-            var d = 16/10;
-            var ds = size[0]/size[1];
-            if (ds>1){
-                out[0] = Math.ceil(size[1]*d);
-                out[1] = size[1];
-            } else {
-                out[0] = size[0];
-                out[1] = Math.ceil(size[0]*d);
-            }
-            return out;
+            return 'scale('+Math.min(
+                size[0]/1024,size[1]/640
+            )+')';
         },
 
         getPageSize:function (){
@@ -236,7 +243,7 @@
 
 
     /**
-     * Событие готовности страницы
+     * Событие на загрузку страницы
      */
     window.addEventListener('DOMContentLoaded', function (){
         trace.info(utils.getPageSize());
@@ -251,7 +258,7 @@
     });
 
     /**
-     * Нажатия кнопок клавы
+     * Событие на нажатие кнопок клавиатуры
      */
     window.addEventListener('keyup',function (e){
         var key = e.keyCode;
@@ -260,11 +267,21 @@
                 var pr = presentations[curentPresentation];
                 pr.stop();
 
-            break;
+                break;
             case 32:
                 var pr = presentations[curentPresentation];
                 pr.next();
-            break;
+                break;
+        }
+    })
+
+    /**
+     * Событие ресайза окна
+     */
+    window.addEventListener('resize',function(){
+        var pr = presentations[curentPresentation];
+        if (pr.state == 'full') {
+            pr.applyScale(utils.getScale());
         }
     })
 
@@ -281,6 +298,32 @@
 
     function onWheel(e){
         e = e || window.event;
+        var body = document.querySelector('body'),
+            delta,
+            pr = presentations[curentPresentation],
+            locked = body.getAttribute('data-scroll') === 'locked';
+
+        if ( !locked && pr.state == 'full') {
+            if (e.deltaY === undefined) {
+                if (e.detail) {
+                    delta = (e.wheelDeltaY / e.detail / 120 * e.detail > 0) ? 1 : -1;
+                } else {
+                    delta = e.wheelDeltaY / 10;
+                }
+            } else {
+                delta = -e.deltaY;
+            }
+
+
+            if (delta > 0) {
+                pr.next();
+            } else if (delta < 0) {
+                pr.previous();
+            }
+            setTimeout(function() {
+                body.setAttribute('data-scroll', 'unlocked');
+            }, Math.abs(delta) > 3 ? 200 : 800);
+        }
     }
 
 })(window,document);
