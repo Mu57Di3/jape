@@ -304,6 +304,8 @@
             locked = body.getAttribute('data-scroll') === 'locked';
 
         if ( !locked && pr.state == 'full') {
+            body.setAttribute('data-scroll', 'locked');
+
             if (e.deltaY === undefined) {
                 if (e.detail) {
                     delta = (e.wheelDeltaY / e.detail / 120 * e.detail > 0) ? 1 : -1;
