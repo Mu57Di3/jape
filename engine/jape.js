@@ -142,7 +142,7 @@
         },
 
         showSlide: function(id){
-            if ( (id < this.slides.length) && (id>=0) ){
+            if (id < this.slides.length){
                 var slide = this.slides[id];
                 slide.classList.add('active');
                 this.curentSlide = id;
@@ -158,13 +158,6 @@
             if (this.state == 'full') {
                 this.hideSlide(this.curentSlide);
                 this.showSlide(this.curentSlide + 1);
-            }
-        },
-
-        previous:function (){
-            if (this.state == 'full') {
-                this.hideSlide(this.curentSlide);
-                this.showSlide(this.curentSlide - 1);
             }
         },
 
@@ -235,9 +228,6 @@
     }
 
 
-    /**
-     * Событие готовности страницы
-     */
     window.addEventListener('DOMContentLoaded', function (){
         trace.info(utils.getPageSize());
         var list  = document.querySelectorAll('presentation');
@@ -250,9 +240,6 @@
         }
     });
 
-    /**
-     * Нажатия кнопок клавы
-     */
     window.addEventListener('keyup',function (e){
         var key = e.keyCode;
         switch (e.which) {
@@ -267,27 +254,5 @@
             break;
         }
     })
-
-    /**
-     * Событие скрола мышки
-     */
-    if ('onwheel' in document) {
-        window.addEventListener ("wheel", onWheel, false);
-    } else if ('onmousewheel' in document) {
-        window.addEventListener ("mousewheel", onWheel, false);
-    } else {
-        window.addEventListener ("MozMousePixelScroll", onWheel, false);
-    }
-
-    function onWheel(e){
-        e = e || window.event;
-        var pr = presentations[curentPresentation];
-        var delta = e.deltaY || e.detail || e.wheelDelta;
-        if (delta>0){
-            pr.next();
-        } else if (delta<0) {
-            pr.previous();
-        }
-    }
 
 })(window,document);
