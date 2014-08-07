@@ -126,6 +126,8 @@
          * Инициализация презентации
          */
         init: function (){
+            var body = document.querySelector('body');
+            body.setAttribute('data-click', 'locked');
             that = this;
             trace.info('Инициализация презентации');
             this.slides = $('section',this.elem);
@@ -139,16 +141,23 @@
         },
 
         showSlide: function(id){
+            trace.info(this.curentSlide);
             if (id < this.slides.length && id>=0){
                 var slide = this.slides[id];
                 slide.classList.add('active');
                 this.curentSlide = id;
+            } else {
+                this.curentSlide = this.slides.length;
             }
+
         },
 
         hideSlide: function(id){
             var slide = this.slides[id];
-            slide.classList.remove('active');
+
+            if (slide != undefined) {
+                slide.classList.remove('active');
+            }
         },
 
         next:function (){
@@ -177,6 +186,13 @@
                 this.state = 'full';
             }
             document.body.classList.add('offScroll');
+
+            setTimeout(function() {
+                trace.info('unlock');
+                var body = document.querySelector('body');
+                body.setAttribute('data-click', 'unlocked');
+            }, 200);
+
         },
 
         stop:function (){
@@ -185,6 +201,8 @@
             this.applyScale('none');
             this.state = 'normal';
             document.body.classList.remove('offScroll');
+            var body = document.querySelector('body');
+            body.setAttribute('data-click', 'locked');
         },
 
         applyScale:function(val){
@@ -272,6 +290,14 @@
                 var pr = presentations[curentPresentation];
                 pr.next();
                 break;
+            case 39:
+                var pr = presentations[curentPresentation];
+                pr.next();
+                break;
+            case 37:
+                var pr = presentations[curentPresentation];
+                pr.previous();
+                break;
         }
     })
 
@@ -327,5 +353,24 @@
             }, Math.abs(delta) > 3 ? 200 : 800);
         }
     }
+
+    /**
+     * Обработка клика мышки клик по правой вперед по левой назад
+     */
+    window.addEventListener("click",function (e){
+        e = e || window.event;
+        var pr = presentations[curentPresentation],
+            body = document.querySelector('body'),
+            lock = body.getAttribute('data-click') === 'locked';
+
+        if (pr.state == 'full' && !lock){
+            size = utils.getPageSize();
+            if (e.screenX > (size[0]/2)){
+                pr.next();
+            } else {
+                pr.previous();
+            }
+        }
+    });
 
 })(window,document);
