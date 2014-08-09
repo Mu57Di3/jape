@@ -148,6 +148,7 @@
                     this.showList.push(val);
                 }
             },this);
+            //todo:избавиться от этого цикла
             forEach(this.showList,function(id,item){
                 item['data-slideid'] = id;
             });
