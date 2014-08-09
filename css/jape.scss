@@ -55,6 +55,10 @@ header{
         visibility: visible;
         float: left;
     }
+
+
+
+
 }
 
 .list{
@@ -82,6 +86,12 @@ header{
         left:0;
         visibility: hidden;
         //margin-left:150%;
+        .next {
+            visibility: hidden;
+        }
+        .next.active{
+            visibility: visible;
+        }
     }
 
     .slide.active{

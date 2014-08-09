@@ -101,6 +101,10 @@ header {
     top: 0;
     left: 0;
     visibility: hidden; }
+    .full .slide .next {
+      visibility: hidden; }
+    .full .slide .next.active {
+      visibility: visible; }
   .full .slide.active {
     visibility: visible; }
   .full .slide.visited {

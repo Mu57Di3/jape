@@ -60,7 +60,7 @@
                 console.log('benderlog - ' + timeStamp);
                 for (var i = 0, len = arguments.length; i < len; i++) {
                     if (typeof arguments[i] === 'object') {
-                        console.dir(arguments[i]);
+                        console.log(arguments[i]);
                     } else {
                         console.log(arguments[i]);
                     }
@@ -115,7 +115,8 @@
      */
     window.jape = function (el){
         this.elem = el;
-        this.slides = {};
+        this.slides = [];
+        this.showList = [];
         this.state = 'normal';
         this.curentSlide = null;
         trace.info(this.fullscreenSize);
@@ -132,6 +133,25 @@
             trace.info('Инициализация презентации');
             this.slides = $('section',this.elem);
 
+            forEach(this.slides,function (id,val){
+                var t = $('.next',val);
+                if (t != null && t.length>0){
+                    var uid = utils.getUID();
+                    val['id']= uid;
+                    val['data-next-parent'] = '1';
+                    this.showList.push(val);
+                    forEach(t,function (id,item){
+                        item['data-parent'] = uid;
+                        this.push(item);
+                    },this.showList);
+                } else {
+                    this.showList.push(val);
+                }
+            },this);
+            forEach(this.showList,function(id,item){
+                item['data-slideid'] = id;
+            });
+            trace.info(this.showList);
 
             // На первый слайд вешаем клик который развернет презентацию на полный экран
             this.slides[0].addEventListener('click',function (e){
@@ -140,37 +160,96 @@
             });
         },
 
-        showSlide: function(id){
-            trace.info(this.curentSlide);
-            if (id < this.slides.length && id>=0){
-                var slide = this.slides[id];
-                slide.classList.add('active');
-                this.curentSlide = id;
-            } else {
-                this.curentSlide = this.slides.length;
-            }
+        showSlide: function(id,direction){
+            direction = direction || 'forward';
+            var showList = this.showList;
 
+            if (id < showList.length && id>=0){
+                var slide = showList[id];
+
+                if (direction == 'back' && slide['data-parent'] !=undefined ){
+                    slide = document.querySelector('#'+slide['data-parent']);
+                    id = slide['data-slideid'];
+                }
+                trace.info(slide);
+                slide.classList.add('active');
+                slide.classList.remove('visited');
+
+                this.curentSlide = id;
+
+            } else {
+                this.curentSlide = this.showList.length-1;
+            }
+            trace.info(this.curentSlide);
         },
 
-        hideSlide: function(id){
-            var slide = this.slides[id];
-
+        hideSlide: function(id,direction){
+            direction = direction || 'forward';
+            var showList = this.showList,
+                slide = showList[id];
             if (slide != undefined) {
-                slide.classList.remove('active');
+                if (slide['data-parent'] == undefined && slide['data-next-parent'] == undefined){
+                    slide.classList.remove('active');
+                    slide.classList.add('visited');
+                    var pID = this._getPrevious(id,direction);
+                    trace.info('pid1 '+pID);
+                    if (showList[pID]!= undefined && showList[pID]['data-parent']!=undefined){
+                        var complite = false,
+                            i = pID;
+                        while(!complite){
+                            showList[i].classList.remove('active');
+                            if (showList[i]['data-next-parent']){
+                                showList[i].classList.add('visited');
+                                complite = true;
+                            } else {
+                                i = this._getPrevious(i,direction);
+                            }
+                        }
+                    }
+                } else {
+                    if (direction == 'back'){
+                        slide.classList.remove('active');
+                        slide.classList.add('visited');
+                        var t = $('.next',slide);
+                        if (t){
+                            forEach(t,function (id,item){
+                                item.classList.remove('active');
+                                item.classList.add('visited');
+                            })
+                        }
+                    }
+                }
+            } else {
+                var pID = this._getPrevious(id,direction);
+                trace.info('pid2 '+pID);
+                if (showList[pID]!= undefined && showList[pID]['data-parent']!=undefined){
+                    var complite = false,
+                        i = pID;
+                    while(!complite){
+                        showList[i].classList.remove('active');
+                        if (showList[i]['data-next-parent']){
+                            showList[i].classList.add('visited');
+                            complite = true;
+                        } else {
+                            i = this._getPrevious(i,direction);
+                        }
+                    }
+                }
             }
+            trace.info('hide '+this.curentSlide);
         },
 
         next:function (){
             if (this.state == 'full') {
-                this.hideSlide(this.curentSlide);
-                this.showSlide(this.curentSlide + 1);
+                this.hideSlide(this.curentSlide,'forward');
+                this.showSlide(this.curentSlide + 1,'forward');
             }
         },
 
         previous: function (){
             if (this.state == 'full') {
-                this.hideSlide(this.curentSlide);
-                this.showSlide(this.curentSlide - 1);
+                this.hideSlide(this.curentSlide,'back');
+                this.showSlide(this.curentSlide - 1,'back');
             }
         },
 
@@ -203,6 +282,9 @@
             document.body.classList.remove('offScroll');
             var body = document.querySelector('body');
             body.setAttribute('data-click', 'locked');
+            forEach(this.showList,function(id,item){
+                item.classList.remove('visited');
+            });
         },
 
         applyScale:function(val){
@@ -219,13 +301,19 @@
                     that.elem.style[item] = val;
                 }
             )
+        },
+
+        _getPrevious: function (id,direction){
+            return direction == 'forward' ? id-1:id+1;
         }
-
-
-
     }
 
     utils = {
+
+        /**
+         * Расчет коэффициента масштабирования для презентации
+         * @returns {string}
+         */
         getScale:function (){
             var size = this.getPageSize();
             return 'scale('+Math.min(
@@ -233,29 +321,41 @@
             )+')';
         },
 
+        /**
+         * Функция оызыврвщвет текущий размер документа
+         * @returns {*[]} - 0-ширина, 1-высота
+         */
         getPageSize:function (){
             pageHeight = this._getDocumentHeight();
             pageWidth = this._getDocumentWidth();
-            windowHeight = this._getViewportHeight();
-            windowWidth = this._getViewportWidth();
-            return [pageWidth,pageHeight,windowWidth,windowHeight];
+
+            return [pageWidth,pageHeight];//,windowWidth,windowHeight];
+        },
+
+        /**
+         * Генерирует строку UID заданной длинны
+         * @param len
+         * @returns {string}
+         */
+        getUID: function (len){
+            len = len || 5;
+            var dic = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            var out = '';
+            for(var i=0;i<len;i++){
+                out += dic.substr(0 || Math.random()*(dic.length-1),1);
+            }
+            return out;
         },
 
         _getDocumentHeight:function () {
-            return Math.max(document.compatMode != 'CSS1Compat' ? document.body.scrollHeight : document.documentElement.scrollHeight, this._getViewportHeight());
-        },
-
-        _getViewportHeight: function () {
-            return ((document.compatMode || isIE) && !isOpera) ? (document.compatMode == 'CSS1Compat') ? document.documentElement.clientHeight : document.body.clientHeight : (document.parentWindow || document.defaultView).innerHeight;
+            return window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight||0;
         },
 
         _getDocumentWidth: function () {
-            return Math.max(document.compatMode != 'CSS1Compat' ? document.body.scrollWidth : document.documentElement.scrollWidth, this._getViewportWidth());
-        },
-
-        _getViewportWidth: function () {
-            return ((document.compatMode || isIE) && !isOpera) ? (document.compatMode == 'CSS1Compat') ? document.documentElement.clientWidth : document.body.clientWidth : (document.parentWindow || document.defaultView).innerWidth;
+            return window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth||0;
         }
+
+
 
     }
 
