@@ -160,6 +160,11 @@
 
         },
 
+        /**
+         * Функция показа следующего слайда
+         * @param id        - номер слайда
+         * @param direction - направление скролинга
+         */
         showSlide: function(id,direction){
             direction = direction || 'forward';
             var showList = this.showList;
@@ -182,6 +187,10 @@
 
         },
 
+        /**
+         * Показ следующего анимированного элемента на слайде
+         * @param id
+         */
         showAnum:function (id){
             var aimateList = this.animateList;
             if (id < aimateList.length && id>=0){
@@ -197,6 +206,11 @@
             }
         },
 
+        /**
+         * Скрывает слайд
+         * @param id        - номер салайда
+         * @param direction - направление скролинга
+         */
         hideSlide: function(id,direction){
             direction = direction || 'forward';
             var showList = this.showList,
@@ -208,6 +222,9 @@
             trace.info('hide '+id);
         },
 
+        /**
+         * Скролинг слайдов веперед
+         */
         next:function (){
             if (this.state == 'full') {
                 if (this.animateList != null){
@@ -219,6 +236,9 @@
             }
         },
 
+        /**
+         * Скролинг слайдов назад
+         */
         previous: function (){
             if (this.state == 'full') {
                 if (this.animateList != null){
@@ -231,6 +251,10 @@
             }
         },
 
+        /**
+         * Старт показа презентации
+         * @param id    - номер слайда если показ начать не с первого
+         */
         start: function(id){
             id = id || 0;
             curentPresentation = this.elem['data-id'];
@@ -252,6 +276,9 @@
 
         },
 
+        /**
+         * Возврат в режим списка слайдов
+         */
         stop:function (){
             this.elem.classList.remove('full');
             this.elem.classList.add('list');
@@ -264,6 +291,10 @@
             $('.progress',document)[0].style['visibility']='hidden';
         },
 
+        /**
+         * Применяет коэффициент масштабирования к презентации при старте ее демонстрации
+         * @param val
+         */
         applyScale:function(val){
             that = this;
             forEach(
@@ -280,10 +311,22 @@
             )
         },
 
+        /**
+         * Полечение номера предыдущего слайда по номеру текущего и значению направления скрлинга
+         * @param id
+         * @param direction
+         * @returns {number}
+         * @private
+         */
         _getPrevious: function (id,direction){
             return direction == 'forward' ? id-1:id+1;
         },
 
+        /**
+         * Нормализация классов анимации на слайде который скрывается
+         * @param id
+         * @private
+         */
         _normaliazeHideAnim: function(id){
             var slide = this.showList[id],
                 nexts = $('.next',slide);
@@ -292,6 +335,10 @@
             });
         },
 
+        /**
+         * Нормализация классов всех амнимации на слайдах презентации вызывается при завершении презентации
+         * @private
+         */
         _normaliazeHideAnimAll:function(){
             var nexts = $('.next',this.elem);
             forEach(nexts,function(id,item){
@@ -299,6 +346,10 @@
             });
         },
 
+        /**
+         * Нормализация классов слайдов при выходе из режима демострации презентации
+         * @private
+         */
         _normalizeHideSlides:function (){
             var slides = this.showList;
             forEach(slides,function (id,val){
@@ -309,6 +360,10 @@
 
     }
 
+    /**
+     * Объект содержит набор служебных функций
+     * @type {{getScale: getScale, getPageSize: getPageSize, getUID: getUID, _getDocumentHeight: _getDocumentHeight, _getDocumentWidth: _getDocumentWidth}}
+     */
     utils = {
 
         /**
@@ -459,6 +514,7 @@
 
     /**
      * Обработка клика мышки клик по правой вперед по левой назад
+     * убрал его пока сильно мешается при отладке
      */
     window.addEventListener("click",function (e){
         e = e || window.event;
