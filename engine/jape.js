@@ -143,12 +143,11 @@
                 }
                 val['data-slide-id']=id;
                 val.addEventListener('click',function (e){
-                    var uid = e.currentTarget['data-slide-id']
-                    that.start.call(that,uid);
-                    trace.info('click '+uid);
+                    var t = e.currentTarget['data-slide-id']
+                    that.start.call(that,t);
+                    trace.info('click '+t);
                 });
                 this.showList.push(val);
-                i++;
             },this);
             //todo:избавиться от этого цикла
             forEach(this.showList,function(id,item){
@@ -239,7 +238,6 @@
             this.applyScale(utils.getScale());
             this.elem.classList.add('full');
             this.elem.classList.remove('list');
-            trace.info(curentPresentation);
             if (this.state == 'normal'){
 
                 this.showSlide(id);
