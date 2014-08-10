@@ -285,7 +285,8 @@
             this.applyScale('none');
             this.state = 'normal';
             document.body.classList.remove('offScroll');
-            var body = document.querySelector('body');
+            this.animateList = null;
+            this.curentAnim = -1;
             this._normalizeHideSlides();
             this._normaliazeHideAnimAll();
             $('.progress',document)[0].style['visibility']='hidden';
