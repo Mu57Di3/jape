@@ -130,7 +130,7 @@
         init: function (){
             var body = document.querySelector('body');
             body.setAttribute('data-click', 'locked');
-            that = this;
+            var that = this;
             trace.info('Инициализация презентации');
             var slides = $('section',this.elem);
 
@@ -141,7 +141,14 @@
                     val['id']= uid;
                     val['data-next-parent'] = '1';
                 }
+                val['data-slide-id']=id;
+                val.addEventListener('click',function (e){
+                    var uid = e.currentTarget['data-slide-id']
+                    that.start.call(that,uid);
+                    trace.info('click '+uid);
+                });
                 this.showList.push(val);
+                i++;
             },this);
             //todo:избавиться от этого цикла
             forEach(this.showList,function(id,item){
@@ -150,11 +157,7 @@
             trace.info(this.showList);
 
             // На первый слайд вешаем клик который развернет презентацию на полный экран
-            slides[0].addEventListener('click',function (e){
-                that.start.call(that);
-
-            });
-
+            trace.info(this.showList[0]);
 
         },
 
@@ -229,24 +232,22 @@
             }
         },
 
-        start: function(){
+        start: function(id){
+            id = id || 0;
             curentPresentation = this.elem['data-id'];
+
             this.applyScale(utils.getScale());
             this.elem.classList.add('full');
             this.elem.classList.remove('list');
-            trace.info(this.state);
+            trace.info(curentPresentation);
             if (this.state == 'normal'){
 
-                this.showSlide(0);
+                this.showSlide(id);
                 this.state = 'full';
             }
             document.body.classList.add('offScroll');
 
-            setTimeout(function() {
-                trace.info('unlock');
-                var body = document.querySelector('body');
-                body.setAttribute('data-click', 'unlocked');
-            }, 200);
+
 
             $('.progress',document)[0].style['visibility']='visible';
             $('.progress .bar',document)[0].style['width'] = '0';
@@ -354,12 +355,13 @@
      */
     window.addEventListener('DOMContentLoaded', function (){
         trace.info(utils.getPageSize());
-        var list  = document.querySelectorAll('presentation');
+        var list  = document.querySelectorAll('.presentation');
         if (list.length > 0){
             for (var i= 0,cnt = list.length;i<cnt;i++){
+                list[i]['data-id'] = i;
                 presentations.push(new jape(list[i]))
                 presentations[i].init();
-                list[i]['data-id'] = i;
+
             }
         }
     });
