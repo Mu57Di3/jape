@@ -25,9 +25,6 @@ footer, header, hgroup, menu, nav, section {
 body {
   line-height: 1; }
 
-ol, ul {
-  list-style: none; }
-
 blockquote, q {
   quotes: none; }
 
@@ -80,13 +77,13 @@ header {
   float: left;
   top: 0;
   left: 0;
-  margin: 0 -412px -220px 0;
+  margin: 0 -472px -280px 0;
   transform-origin: 0 0;
   transform: scale(0.5);
   /*  visibility: hidden;*/ }
   @media (max-width: 1324px) {
     .slide {
-      margin: 0 -688px -400px 0;
+      margin: 0 -748px -460px 0;
       transform: scale(0.25); } }
   .slide:nth-child(2) {
     visibility: visible;
@@ -125,24 +122,9 @@ header {
   .slide sup {
     top: -0.5em; }
   .slide ol, .slide ul {
-    margin: 0 0 50px;
-    counter-reset: list; }
-    .slide ol li, .slide ul li {
-      text-indent: -2em; }
-      .slide ol li:before, .slide ul li:before {
-        display: inline-block;
-        width: 2em;
-        color: #BBB;
-        text-align: right; }
+    margin: 0 0 50px 10px; }
     .slide ol ol, .slide ol ul, .slide ul ol, .slide ul ul {
       margin: 0 0 0 2em; }
-  .slide ul > li:before {
-    content: '\2022\00A0\00A0'; }
-  .slide ul > li:lang(ru):before {
-    content: '\2014\00A0\00A0'; }
-  .slide ol > li:before {
-    counter-increment: list;
-    content: counter(list) ".\00A0"; }
   .slide pre {
     margin: 0 0 49px 50px;
     padding: 1px 0 0;
