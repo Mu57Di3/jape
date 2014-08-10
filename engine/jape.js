@@ -115,7 +115,8 @@
      */
     window.jape = function (el){
         this.elem = el;
-        this.slides = [];
+        this.animateList = null;
+        this.curentAnim = -1;
         this.showList = [];
         this.state = 'normal';
         this.curentSlide = null;
@@ -131,22 +132,16 @@
             body.setAttribute('data-click', 'locked');
             that = this;
             trace.info('Инициализация презентации');
-            this.slides = $('section',this.elem);
+            var slides = $('section',this.elem);
 
-            forEach(this.slides,function (id,val){
+            forEach(slides,function (id,val){
                 var t = $('.next',val);
                 if (t != null && t.length>0){
                     var uid = utils.getUID();
                     val['id']= uid;
                     val['data-next-parent'] = '1';
-                    this.showList.push(val);
-                    forEach(t,function (id,item){
-                        item['data-parent'] = uid;
-                        this.push(item);
-                    },this.showList);
-                } else {
-                    this.showList.push(val);
                 }
+                this.showList.push(val);
             },this);
             //todo:избавиться от этого цикла
             forEach(this.showList,function(id,item){
@@ -155,7 +150,7 @@
             trace.info(this.showList);
 
             // На первый слайд вешаем клик который развернет презентацию на полный экран
-            this.slides[0].addEventListener('click',function (e){
+            slides[0].addEventListener('click',function (e){
                 that.start.call(that);
 
             });
@@ -169,22 +164,35 @@
 
             if (id < showList.length && id>=0){
                 var slide = showList[id];
-
-                if (direction == 'back' && slide['data-parent'] !=undefined ){
-                    slide = document.querySelector('#'+slide['data-parent']);
-                    id = slide['data-slideid'];
-                }
-                trace.info(slide);
                 slide.classList.add('active');
                 slide.classList.remove('visited');
-
+                if (slide['data-next-parent']!= null){
+                    this.animateList = $('.next',slide);
+                    if (this.animateList.length > 0){
+                        this.curentAnim = -1;
+                    }
+                }
                 this.curentSlide = id;
                 $('.progress .bar',document)[0].style['width'] = Math.round(this.curentSlide/(this.showList.length-1)*100)+'%';
-                trace.info(this.curentSlide/(this.showList.length-1));
             } else {
-                this.curentSlide = this.showList.length-1;
+                this.curentSlide = this.showList.length;
             }
-            trace.info(this.curentSlide);
+
+        },
+
+        showAnum:function (id){
+            var aimateList = this.animateList;
+            if (id < aimateList.length && id>=0){
+                var slide = aimateList[id];
+                slide.classList.add('active');
+                slide.classList.remove('visited');
+                this.curentAnim = id;
+                $('.progress .bar',document)[0].style['width'] = Math.round(this.curentSlide/(this.showList.length-1)*100)+'%';
+                if (id == aimateList.length-1){
+                    this.animateList = null;
+                    this.curentAnim = -1;
+                }
+            }
         },
 
         hideSlide: function(id,direction){
@@ -192,66 +200,30 @@
             var showList = this.showList,
                 slide = showList[id];
             if (slide != undefined) {
-                if (slide['data-parent'] == undefined && slide['data-next-parent'] == undefined){
-                    slide.classList.remove('active');
-                    slide.classList.add('visited');
-                    var pID = this._getPrevious(id,direction);
-                    trace.info('pid1 '+pID);
-                    if (showList[pID]!= undefined && showList[pID]['data-parent']!=undefined){
-                        var complite = false,
-                            i = pID;
-                        while(!complite){
-                            showList[i].classList.remove('active');
-                            if (showList[i]['data-next-parent']){
-                                showList[i].classList.add('visited');
-                                complite = true;
-                            } else {
-                                i = this._getPrevious(i,direction);
-                            }
-                        }
-                    }
-                } else {
-                    if (direction == 'back'){
-                        slide.classList.remove('active');
-                        slide.classList.add('visited');
-                        var t = $('.next',slide);
-                        if (t){
-                            forEach(t,function (id,item){
-                                item.classList.remove('active');
-                                item.classList.add('visited');
-                            })
-                        }
-                    }
-                }
-            } else {
-                var pID = this._getPrevious(id,direction);
-                trace.info('pid2 '+pID);
-                if (showList[pID]!= undefined && showList[pID]['data-parent']!=undefined){
-                    var complite = false,
-                        i = pID;
-                    while(!complite){
-                        showList[i].classList.remove('active');
-                        if (showList[i]['data-next-parent']){
-                            showList[i].classList.add('visited');
-                            complite = true;
-                        } else {
-                            i = this._getPrevious(i,direction);
-                        }
-                    }
-                }
+                slide.classList.remove('active');
+                slide.classList.add('visited');
             }
-            trace.info('hide '+this.curentSlide);
+            trace.info('hide '+id);
         },
 
         next:function (){
             if (this.state == 'full') {
-                this.hideSlide(this.curentSlide,'forward');
-                this.showSlide(this.curentSlide + 1,'forward');
+                if (this.animateList != null){
+                    this.showAnum(this.curentAnim+1);
+                }  else {
+                    this.hideSlide(this.curentSlide,'forward');
+                    this.showSlide(this.curentSlide + 1,'forward');
+                }
             }
         },
 
         previous: function (){
             if (this.state == 'full') {
+                if (this.animateList != null){
+                    this.animateList = null;
+                    this.curentAnim = -1;
+                    this._normaliazeHideAnim(this.curentSlide);
+                }
                 this.hideSlide(this.curentSlide,'back');
                 this.showSlide(this.curentSlide - 1,'back');
             }
@@ -313,6 +285,15 @@
 
         _getPrevious: function (id,direction){
             return direction == 'forward' ? id-1:id+1;
+        },
+
+        _normaliazeHideAnim: function(id){
+            var slide = this.showList[id],
+                nexts = $('.next',slide);
+            forEach(nexts,function(id,item){
+                item.classList.remove('active');
+            });
+
         }
     }
 
