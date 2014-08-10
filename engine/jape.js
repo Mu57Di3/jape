@@ -430,6 +430,13 @@
 
             }
         }
+        //Создадим прогресс бар
+        var progress = document.createElement('div');
+        progress.classList.add('progress');
+        var bar = document.createElement('div')
+        bar.classList.add('bar');
+        progress.appendChild(bar);
+        document.body.appendChild(progress);
     });
 
     /**
