@@ -259,10 +259,8 @@
             this.state = 'normal';
             document.body.classList.remove('offScroll');
             var body = document.querySelector('body');
-            body.setAttribute('data-click', 'locked');
-            forEach(this.showList,function(id,item){
-                item.classList.remove('visited');
-            });
+            this._normalizeHideSlides();
+            this._normaliazeHideAnimAll();
             $('.progress',document)[0].style['visibility']='hidden';
         },
 
@@ -292,8 +290,23 @@
             forEach(nexts,function(id,item){
                 item.classList.remove('active');
             });
+        },
 
+        _normaliazeHideAnimAll:function(){
+            var nexts = $('.next',this.elem);
+            forEach(nexts,function(id,item){
+                item.classList.remove('active');
+            });
+        },
+
+        _normalizeHideSlides:function (){
+            var slides = this.showList;
+            forEach(slides,function (id,val){
+                val.classList.remove('active');
+                val.classList.remove('visited');
+            });
         }
+
     }
 
     utils = {
