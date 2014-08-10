@@ -81,6 +81,22 @@ header {
     visibility: visible;
     float: left; }
 
+.progress {
+  visibility: hidden;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  display: block;
+  height: 10px;
+  width: 100%;
+  z-index: 800;
+  background-color: #FFFFFF; }
+  .progress .bar {
+    display: block;
+    height: 100%;
+    width: 0;
+    background-color: cadetblue; }
+
 .list {
   overflow: hidden; }
 

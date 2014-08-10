@@ -159,6 +159,8 @@
                 that.start.call(that);
 
             });
+
+
         },
 
         showSlide: function(id,direction){
@@ -177,7 +179,8 @@
                 slide.classList.remove('visited');
 
                 this.curentSlide = id;
-
+                $('.progress .bar',document)[0].style['width'] = Math.round(this.curentSlide/(this.showList.length-1)*100)+'%';
+                trace.info(this.curentSlide/(this.showList.length-1));
             } else {
                 this.curentSlide = this.showList.length-1;
             }
@@ -273,6 +276,9 @@
                 body.setAttribute('data-click', 'unlocked');
             }, 200);
 
+            $('.progress',document)[0].style['visibility']='visible';
+            $('.progress .bar',document)[0].style['width'] = '0';
+
         },
 
         stop:function (){
@@ -286,6 +292,7 @@
             forEach(this.showList,function(id,item){
                 item.classList.remove('visited');
             });
+            $('.progress',document)[0].style['visibility']='hidden';
         },
 
         applyScale:function(val){
@@ -430,7 +437,8 @@
             pr = presentations[curentPresentation],
             locked = body.getAttribute('data-scroll') === 'locked';
 
-        if ( !locked && pr.state == 'full') {
+
+        if (pr != undefined && !locked && pr.state == 'full') {
             body.setAttribute('data-scroll', 'locked');
 
             if (e.deltaY === undefined) {
