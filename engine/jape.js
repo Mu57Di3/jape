@@ -514,9 +514,9 @@
 
     /**
      * Обработка клика мышки клик по правой вперед по левой назад
-     * убрал его пока сильно мешается при отладке
+     * убрал его неудачная идео слишком неудобно
      */
-    window.addEventListener("click",function (e){
+    /*window.addEventListener("click",function (e){
         e = e || window.event;
         var pr = presentations[curentPresentation],
             body = document.querySelector('body'),
@@ -525,11 +525,11 @@
         if (pr.state == 'full' && !lock){
             size = utils.getPageSize();
             if (e.screenX > (size[0]/2)){
-                //pr.next();
+                pr.next();
             } else {
-                //pr.previous();
+                pr.previous();
             }
         }
-    });
+    });*/
 
 })(window,document);
