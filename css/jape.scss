@@ -2,8 +2,9 @@
 
 $width:1024px;
 $height:640px;
-$fontSize:25px;
+$fontSize:23px;
 $break:1324px;
+$top:40px;
 
 
 
@@ -46,20 +47,15 @@ header{
         transform:scale(0.25);
     }
 
-    h2{
-        font-size: $fontSize*1.5;
-        color: #cccccc;
-    }
+
 
     &:nth-child(2){
         visibility: visible;
         float: left;
     }
-
-
-
-
 }
+
+@import 'theme';
 
 .progress{
     visibility: hidden;

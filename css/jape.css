@@ -40,9 +40,16 @@ table {
   border-collapse: collapse;
   border-spacing: 0; }
 
+*,
+*:after,
+*:before {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+
 body {
   background: url("tweed.png");
-  font-size: 25px; }
+  font-size: 23px; }
 
 .offScroll {
   overflow: hidden; }
@@ -54,7 +61,7 @@ header {
   padding: 20px; }
   header h1 {
     color: #cccccc;
-    font-size: 50px; }
+    font-size: 46px; }
 
 .slide {
   position: relative;
@@ -74,12 +81,98 @@ header {
     .slide {
       margin: 0 -688px -400px 0;
       transform: scale(0.25); } }
-  .slide h2 {
-    font-size: 37.5px;
-    color: #cccccc; }
   .slide:nth-child(2) {
     visibility: visible;
     float: left; }
+
+.slide {
+  padding: 40px; }
+  .slide h2 {
+    font-size: 34.5px;
+    color: #cccccc;
+    padding: 0 0 37px; }
+  .slide p {
+    width: 100%;
+    padding: 0 0 50px; }
+  .slide b, .slide strong {
+    font-weight: bold; }
+  .slide i, .slide em {
+    font-style: italic; }
+  .slide code, .slide kbd, .slide mark, .slide samp {
+    padding: 3px 8px;
+    border-radius: 8px;
+    color: #000; }
+  .slide kbd, .slide code, .slide samp {
+    background: rgba(0, 0, 0, 0.07);
+    color: #000;
+    line-height: 1;
+    font-family: monospace; }
+  .slide mark {
+    background-color: gold; }
+  .slide sub, .slide sup {
+    position: relative;
+    line-height: 0;
+    font-size: 75%; }
+  .slide sub {
+    bottom: -0.25em; }
+  .slide sup {
+    top: -0.5em; }
+  .slide ol, .slide ul {
+    margin: 0 0 50px;
+    counter-reset: list; }
+    .slide ol li, .slide ul li {
+      text-indent: -2em; }
+      .slide ol li:before, .slide ul li:before {
+        display: inline-block;
+        width: 2em;
+        color: #BBB;
+        text-align: right; }
+    .slide ol ol, .slide ol ul, .slide ul ol, .slide ul ul {
+      margin: 0 0 0 2em; }
+  .slide ul > li:before {
+    content: '\2022\00A0\00A0'; }
+  .slide ul > li:lang(ru):before {
+    content: '\2014\00A0\00A0'; }
+  .slide ol > li:before {
+    counter-increment: list;
+    content: counter(list) ".\00A0"; }
+  .slide pre {
+    margin: 0 0 49px 50px;
+    padding: 1px 0 0;
+    counter-reset: code;
+    white-space: normal;
+    tab-size: 4; }
+    .slide pre code {
+      display: block;
+      padding: 0;
+      background: none;
+      white-space: pre;
+      line-height: 2; }
+      .slide pre code:before {
+        position: absolute;
+        margin-left: -50px;
+        color: #BBB;
+        counter-increment: code;
+        content: counter(code,decimal-leading-zero) "."; }
+      .slide pre code:only-child:before {
+        content: ''; }
+    .slide pre mark.important {
+      background: #C00;
+      color: #FFF; }
+    .slide pre mark.comment {
+      padding: 0;
+      background: none;
+      color: #999; }
+  .slide table {
+    margin: 0 0 50px;
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0; }
+    .slide table th, .slide table td {
+      border-bottom: solid 1px #BBBBBB; }
+    .slide table th {
+      text-align: left;
+      font-weight: bold; }
 
 .progress {
   visibility: hidden;

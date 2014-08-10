@@ -33,7 +33,7 @@
      */
     var forEach = function (array, callback, scope) {
         for (var i = 0; i < array.length; i++) {
-            callback.call(scope, i, array[i]); // passes back stuff we need
+            callback.call(scope, i, array[i]);
         }
     };
 
@@ -475,9 +475,9 @@
         if (pr.state == 'full' && !lock){
             size = utils.getPageSize();
             if (e.screenX > (size[0]/2)){
-                pr.next();
+                //pr.next();
             } else {
-                pr.previous();
+                //pr.previous();
             }
         }
     });
