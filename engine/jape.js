@@ -26,7 +26,7 @@
     }
 
     /**
-     * Пребор элементов колекции или массива
+     * Перебор элементов колекции или массива
      * @param array
      * @param callback
      * @param scope
@@ -50,7 +50,7 @@
         },
 
         /**
-         * Провто вывод какой-то информации с штампом времяни
+         * Просто вывод какой-то информации с штампом времени
          * @returns {boolean}
          */
         info: function (){
@@ -110,7 +110,7 @@
 
 
     /**
-     * Основоной класс презентации
+     * Основной класс презентации
      * @param el    - обект <presentation>
      */
     window.jape = function (el){
@@ -208,7 +208,7 @@
 
         /**
          * Скрывает слайд
-         * @param id        - номер салайда
+         * @param id        - номер слайда
          * @param direction - направление скролинга
          */
         hideSlide: function(id,direction){
@@ -223,7 +223,7 @@
         },
 
         /**
-         * Скролинг слайдов веперед
+         * Скролинг слайдов вперед
          */
         next:function (){
             if (this.state == 'full') {
@@ -274,6 +274,11 @@
             $('.progress',document)[0].style['visibility']='visible';
             var per = id>0 ? Math.round(this.curentSlide/(this.showList.length-1)*100)+'%' : '0';
             $('.progress .bar',document)[0].style['width'] = per;
+            setTimeout(function() {
+                var body = document.querySelector('body');
+                body.setAttribute('data-click', 'unlocked');
+            }, 200);
+
 
         },
 
@@ -291,6 +296,8 @@
             this._normalizeHideSlides();
             this._normaliazeHideAnimAll();
             $('.progress',document)[0].style['visibility']='hidden';
+            var body = document.querySelector('body');
+            body.setAttribute('data-click', 'locked');
         },
 
         /**
@@ -314,7 +321,7 @@
         },
 
         /**
-         * Полечение номера предыдущего слайда по номеру текущего и значению направления скрлинга
+         * Получение номера предыдущего слайда по номеру текущего и значению направления скрлинга
          * @param id
          * @param direction
          * @returns {number}
@@ -338,7 +345,7 @@
         },
 
         /**
-         * Нормализация классов всех амнимации на слайдах презентации вызывается при завершении презентации
+         * Нормализация классов всех анимации на слайдах презентации вызывается при завершении презентации
          * @private
          */
         _normaliazeHideAnimAll:function(){
@@ -380,7 +387,7 @@
         },
 
         /**
-         * Функция оызыврвщвет текущий размер документа
+         * Функция возвращает текущий размер документа
          * @returns {*[]} - 0-ширина, 1-высота
          */
         getPageSize:function (){
@@ -472,7 +479,7 @@
      */
     window.addEventListener('resize',function(){
         var pr = presentations[curentPresentation];
-        if (pr.state == 'full') {
+        if (pr != undefined && pr.state == 'full') {
             pr.applyScale(utils.getScale());
         }
     })
@@ -522,16 +529,15 @@
     }
 
     /**
-     * Обработка клика мышки клик по правой вперед по левой назад
-     * убрал его неудачная идео слишком неудобно
+     * Обработка клика мышки клик по правой стороне документа вперед, по левой назад
      */
-    /*window.addEventListener("click",function (e){
+    window.addEventListener("click",function (e){
         e = e || window.event;
         var pr = presentations[curentPresentation],
             body = document.querySelector('body'),
             lock = body.getAttribute('data-click') === 'locked';
 
-        if (pr.state == 'full' && !lock){
+        if (pr != undefined && !lock && pr.state == 'full' && e.button == 0 ){
             size = utils.getPageSize();
             if (e.screenX > (size[0]/2)){
                 pr.next();
@@ -539,6 +545,8 @@
                 pr.previous();
             }
         }
-    });*/
+    });
+
+
 
 })(window,document);
