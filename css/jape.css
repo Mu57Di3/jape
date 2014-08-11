@@ -47,7 +47,8 @@ table {
 body {
   background: url("tweed.png");
   font-size: 23px;
-  margin: 50px; }
+  margin: 50px;
+  font-family: 'PT Sans', sans-serif; }
 
 .offScroll {
   overflow: hidden; }
