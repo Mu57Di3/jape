@@ -192,14 +192,14 @@
          * @param id
          */
         showAnum:function (id){
-            var aimateList = this.animateList;
-            if (id < aimateList.length && id>=0){
-                var slide = aimateList[id];
+            var animateList = this.animateList;
+            if (id < animateList.length && id>=0){
+                var slide = animateList[id];
                 slide.classList.add('active');
                 slide.classList.remove('visited');
                 this.curentAnim = id;
                 $('.progress .bar',document)[0].style['width'] = Math.round(this.curentSlide/(this.showList.length-1)*100)+'%';
-                if (id == aimateList.length-1){
+                if (id == animateList.length-1){
                     this.animateList = null;
                     this.curentAnim = -1;
                 }
@@ -272,7 +272,8 @@
 
 
             $('.progress',document)[0].style['visibility']='visible';
-            $('.progress .bar',document)[0].style['width'] = '0';
+            var per = id>0 ? Math.round(this.curentSlide/(this.showList.length-1)*100)+'%' : '0';
+            $('.progress .bar',document)[0].style['width'] = per;
 
         },
 
